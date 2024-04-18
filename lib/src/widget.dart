@@ -8,7 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:markdown/markdown.dart' as md;
-
+import 'package:selectable/selectable.dart' as ui;
 import '../flutter_markdown.dart';
 import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
 
@@ -225,6 +225,7 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.fitContent = false,
     this.listItemCrossAxisAlignment = MarkdownListItemCrossAxisAlignment.baseline,
     this.softLineBreak = false,
+    this.isScroll = false,
   });
 
   /// The Markdown to display.
@@ -327,6 +328,10 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// Subclasses should override this function to display the given children,
   /// which are the parsed representation of [data].
+  ///
+
+  final bool isScroll;
+
   @protected
   Widget build(BuildContext context, List<Widget>? children);
 
@@ -467,6 +472,7 @@ class MarkdownBody extends MarkdownWidget {
     this.shrinkWrap = true,
     super.fitContent = true,
     super.softLineBreak,
+    bool isScroll = false,
   });
 
   /// If [shrinkWrap] is `true`, [MarkdownBody] will take the minimum height
@@ -476,6 +482,15 @@ class MarkdownBody extends MarkdownWidget {
 
   @override
   Widget build(BuildContext context, List<Widget>? children) {
+    if (isScroll) {
+      return ui.Selectable(
+          selectWordOnDoubleTap: true,
+          selectWordOnLongPress: false,
+          popupMenuItems: [
+            ui.SelectableMenuItem(type: ui.SelectableMenuItemType.copy),
+          ],
+          child: ListView(shrinkWrap: true, padding: EdgeInsets.zero, children: children ?? []));
+    }
     if (children!.length == 1 && shrinkWrap) {
       return children.single;
     }
@@ -523,6 +538,7 @@ class Markdown extends MarkdownWidget {
     this.physics,
     this.shrinkWrap = false,
     super.softLineBreak,
+    bool isScroll = false,
   });
 
   /// The amount of space by which to inset the children.
