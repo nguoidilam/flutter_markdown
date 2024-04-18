@@ -9,7 +9,12 @@ import 'package:flutter/material.dart';
 class MarkdownStyleSheet {
   /// Creates an explicit mapping of [TextStyle] objects to Markdown elements.
   MarkdownStyleSheet({
+    this.newText,
+    this.underlineStrike,
+    this.file,
+    this.mention,
     this.a,
+    this.u,
     this.p,
     this.pPadding,
     this.code,
@@ -29,6 +34,7 @@ class MarkdownStyleSheet {
     this.strong,
     this.del,
     this.blockquote,
+    this.pre,
     this.img,
     this.checkbox,
     this.blockSpacing,
@@ -68,15 +74,14 @@ class MarkdownStyleSheet {
         textScaler = textScaler ??
             // Internally, only textScaler is used, so convert the scale factor
             // to a linear scaler.
-            (textScaleFactor == null
-                ? null
-                : TextScaler.linear(textScaleFactor)),
+            (textScaleFactor == null ? null : TextScaler.linear(textScaleFactor)),
         _styles = <String, TextStyle?>{
           'a': a,
+          'u': u,
           'p': p,
           'li': p,
           'code': code,
-          'pre': p,
+          'pre': pre,
           'h1': h1,
           'h2': h2,
           'h3': h3,
@@ -92,68 +97,88 @@ class MarkdownStyleSheet {
           'th': tableHead,
           'tr': tableBody,
           'td': tableBody,
+          'underlineStrike': underlineStrike,
+          'newText': newText
         };
 
   /// Creates a [MarkdownStyleSheet] from the [TextStyle]s in the provided [ThemeData].
   factory MarkdownStyleSheet.fromTheme(ThemeData theme) {
     assert(theme.textTheme.bodyMedium?.fontSize != null);
     return MarkdownStyleSheet(
-      a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.bodyMedium,
+      newText: theme.textTheme.bodyMedium?.copyWith(
+        backgroundColor: Color(0xffCCE8CE),
+        color: Color(0xff172B4D),
+      ),
+      underlineStrike: TextStyle(
+          decoration: TextDecoration.combine([TextDecoration.underline, TextDecoration.lineThrough]),
+          decorationThickness: 2,
+          color: Color(0xff172B4D)),
+      file: TextStyle(
+        color: Color(0xff172B4D),
+        decoration: TextDecoration.underline,
+      ),
+      mention: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Color(0xff1242CA)),
+      u: TextStyle(decoration: TextDecoration.underline, decorationThickness: 2, color: Color(0xff172B4D)),
+      a: TextStyle(color: Color(0xff1242CA), decoration: TextDecoration.underline),
+      p: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
+        color: Color(0xff172B4D),
         fontFamily: 'monospace',
-        fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
+        backgroundColor: Color(0xffFAFAFA),
+        fontSize: 14,
       ),
-      h1: theme.textTheme.headlineSmall,
+      h1: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h1Padding: EdgeInsets.zero,
-      h2: theme.textTheme.titleLarge,
+      h2: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h2Padding: EdgeInsets.zero,
-      h3: theme.textTheme.titleMedium,
+      h3: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h3Padding: EdgeInsets.zero,
-      h4: theme.textTheme.bodyLarge,
+      h4: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h4Padding: EdgeInsets.zero,
-      h5: theme.textTheme.bodyLarge,
+      h5: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h5Padding: EdgeInsets.zero,
-      h6: theme.textTheme.bodyLarge,
+      h6: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h6Padding: EdgeInsets.zero,
-      em: const TextStyle(fontStyle: FontStyle.italic),
-      strong: const TextStyle(fontWeight: FontWeight.bold),
-      del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
+      em: TextStyle(fontStyle: FontStyle.italic, color: Color(0xff172B4D)),
+      strong: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff172B4D)),
+      del: TextStyle(decoration: TextDecoration.lineThrough, decorationThickness: 2, color: Color(0xff172B4D)),
+      pre: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
+      blockquote: TextStyle(color: Color(0xFF6A6D71), fontWeight: FontWeight.bold),
       img: theme.textTheme.bodyMedium,
       checkbox: theme.textTheme.bodyMedium!.copyWith(
         color: theme.primaryColor,
       ),
       blockSpacing: 8.0,
       listIndent: 24.0,
-      listBullet: theme.textTheme.bodyMedium,
+      listBullet: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
       listBulletPadding: const EdgeInsets.only(right: 4),
-      tableHead: const TextStyle(fontWeight: FontWeight.w600),
-      tableBody: theme.textTheme.bodyMedium,
+      tableHead: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
+      tableBody: theme.textTheme.bodyMedium!.copyWith(color: Color(0xff172B4D)),
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(
-        color: theme.dividerColor,
+        color: Color(0xffD2D2D2),
+        width: 1,
       ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
-      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquotePadding: const EdgeInsets.only(top: 6.0, bottom: 2, left: 12),
       blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(2.0),
+        border: Border(
+          left: BorderSide(width: 4, color: Colors.grey.shade300),
+        ),
       ),
-      codeblockPadding: const EdgeInsets.all(8.0),
+      codeblockPadding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(top: 8),
       codeblockDecoration: BoxDecoration(
-        color: theme.cardTheme.color ?? theme.cardColor,
+        color: Color(0xffFAFAFA),
         borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(
             width: 5.0,
-            color: theme.dividerColor,
+            color: Color(0xffD2D2D2),
           ),
         ),
       ),
@@ -164,106 +189,81 @@ class MarkdownStyleSheet {
   factory MarkdownStyleSheet.fromCupertinoTheme(CupertinoThemeData theme) {
     assert(theme.textTheme.textStyle.fontSize != null);
     return MarkdownStyleSheet(
-      a: theme.textTheme.textStyle.copyWith(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.link.darkColor
-            : CupertinoColors.link.color,
+      newText: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        backgroundColor: Color(0xffCCE8CE),
+        color: Color(0xff172B4D),
       ),
-      p: theme.textTheme.textStyle,
+      underlineStrike: TextStyle(
+          decoration: TextDecoration.combine([TextDecoration.underline, TextDecoration.lineThrough]),
+          decorationThickness: 2,
+          color: Color(0xff172B4D)),
+      file: TextStyle(color: Color(0xff172B4D), decoration: TextDecoration.underline),
+      mention: const TextStyle(color: Colors.blue, backgroundColor: Colors.grey),
+      u: TextStyle(decoration: TextDecoration.underline, color: Color(0xff172B4D)),
+      a: TextStyle(color: Color(0xff1242CA), decoration: TextDecoration.underline),
+      p: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Color(0xff172B4D)),
       pPadding: EdgeInsets.zero,
-      code: theme.textTheme.textStyle.copyWith(
-        backgroundColor: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
+      code: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
+        color: Color(0xff172B4D),
+        backgroundColor: Color(0xffFAFAFA),
         fontFamily: 'monospace',
-        fontSize: theme.textTheme.textStyle.fontSize! * 0.85,
       ),
-      h1: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 10,
-      ),
+      h1: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h1Padding: EdgeInsets.zero,
-      h2: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 8,
-      ),
+      h2: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h2Padding: EdgeInsets.zero,
-      h3: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 6,
-      ),
+      h3: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h3Padding: EdgeInsets.zero,
-      h4: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 4,
-      ),
+      h4: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
       h4Padding: EdgeInsets.zero,
-      h5: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-        fontSize: theme.textTheme.textStyle.fontSize! + 2,
-      ),
+      h5: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
       h5Padding: EdgeInsets.zero,
-      h6: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w500,
-      ),
+      h6: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
       h6Padding: EdgeInsets.zero,
-      em: theme.textTheme.textStyle.copyWith(
-        fontStyle: FontStyle.italic,
-      ),
-      strong: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.bold,
-      ),
-      del: theme.textTheme.textStyle.copyWith(
-        decoration: TextDecoration.lineThrough,
-      ),
-      blockquote: theme.textTheme.textStyle,
-      img: theme.textTheme.textStyle,
-      checkbox: theme.textTheme.textStyle.copyWith(
+      em: TextStyle(fontStyle: FontStyle.italic, color: Color(0xff172B4D)),
+      strong: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff172B4D)),
+      del: TextStyle(decoration: TextDecoration.lineThrough, color: Color(0xff172B4D)),
+      blockquote: TextStyle(color: Color(0xFF6A6D71), fontWeight: FontWeight.bold),
+      img: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+      checkbox: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.normal,
         color: theme.primaryColor,
       ),
-      blockSpacing: 8,
-      listIndent: 24,
-      listBullet: theme.textTheme.textStyle,
+      blockSpacing: 8.0,
+      listIndent: 24.0,
+      listBullet: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Color(0xff172B4D)),
       listBulletPadding: const EdgeInsets.only(right: 4),
-      tableHead: theme.textTheme.textStyle.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
-      tableBody: theme.textTheme.textStyle,
+      tableHead: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
+      tableBody: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
       tableHeadAlign: TextAlign.center,
-      tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
+      tableBorder: TableBorder.all(
+        color: Color(0xffD2D2D2),
+        width: 1,
+      ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      tableCellsDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
-      ),
-      blockquotePadding: const EdgeInsets.all(16),
+      tableCellsDecoration: const BoxDecoration(),
+      blockquotePadding: const EdgeInsets.only(top: 6.0, bottom: 2, left: 12),
       blockquoteDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
         border: Border(
-          left: BorderSide(
-            color: theme.brightness == Brightness.dark
-                ? CupertinoColors.systemGrey4.darkColor
-                : CupertinoColors.systemGrey4.color,
-            width: 4,
-          ),
+          left: BorderSide(width: 4, color: Colors.grey.shade300),
         ),
       ),
-      codeblockPadding: const EdgeInsets.all(8),
+      codeblockPadding: const EdgeInsets.all(8.0),
       codeblockDecoration: BoxDecoration(
-        color: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
+        color: Color(0xffFAFAFA),
+        borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: theme.brightness == Brightness.dark
-                ? CupertinoColors.systemGrey4.darkColor
-                : CupertinoColors.systemGrey4.color,
+            width: 5.0,
+            color: Color(0xffD2D2D2),
           ),
         ),
       ),
@@ -274,64 +274,79 @@ class MarkdownStyleSheet {
   ///
   /// This constructor uses larger fonts for the headings than in
   /// [MarkdownStyle.fromTheme].
-  factory MarkdownStyleSheet.largeFromTheme(ThemeData theme) {
+  factory MarkdownStyleSheet.largeFromTheme(BuildContext context, ThemeData theme) {
     return MarkdownStyleSheet(
-      a: const TextStyle(color: Colors.blue),
-      p: theme.textTheme.bodyMedium,
+      newText: theme.textTheme.bodyMedium?.copyWith(
+        backgroundColor: Color(0xffCCE8CE),
+        color: Color(0xff172B4D),
+      ),
+      underlineStrike: TextStyle(
+          decoration: TextDecoration.combine([TextDecoration.underline, TextDecoration.lineThrough]),
+          decorationThickness: 2,
+          color: Color(0xff172B4D)),
+      file: TextStyle(color: Color(0xff172B4D), decoration: TextDecoration.underline),
+      mention: const TextStyle(color: Colors.blue, backgroundColor: Colors.grey),
+      u: TextStyle(decoration: TextDecoration.underline, color: Color(0xff172B4D)),
+      a: TextStyle(color: Color(0xff1242CA), decoration: TextDecoration.underline),
+      p: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
+        color: Color(0xff172B4D),
+        backgroundColor: Color(0xffFAFAFA),
         fontFamily: 'monospace',
-        fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
+        fontSize: 14,
       ),
-      h1: theme.textTheme.displayMedium,
+      h1: TextStyle(fontSize: 22, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h1Padding: EdgeInsets.zero,
-      h2: theme.textTheme.displaySmall,
+      h2: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h2Padding: EdgeInsets.zero,
-      h3: theme.textTheme.headlineMedium,
+      h3: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xff172B4D)),
       h3Padding: EdgeInsets.zero,
-      h4: theme.textTheme.headlineSmall,
+      h4: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h4Padding: EdgeInsets.zero,
-      h5: theme.textTheme.titleLarge,
+      h5: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h5Padding: EdgeInsets.zero,
-      h6: theme.textTheme.titleMedium,
+      h6: theme.textTheme.bodyLarge?.copyWith(color: Color(0xff172B4D)),
       h6Padding: EdgeInsets.zero,
-      em: const TextStyle(fontStyle: FontStyle.italic),
-      strong: const TextStyle(fontWeight: FontWeight.bold),
-      del: const TextStyle(decoration: TextDecoration.lineThrough),
-      blockquote: theme.textTheme.bodyMedium,
+      em: TextStyle(fontStyle: FontStyle.italic, color: Color(0xff172B4D)),
+      strong: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff172B4D)),
+      del: TextStyle(decoration: TextDecoration.lineThrough, color: Color(0xff172B4D)),
+      pre: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
+      blockquote: TextStyle(color: Color(0xFF6A6D71), fontWeight: FontWeight.bold),
       img: theme.textTheme.bodyMedium,
       checkbox: theme.textTheme.bodyMedium!.copyWith(
         color: theme.primaryColor,
       ),
       blockSpacing: 8.0,
       listIndent: 24.0,
-      listBullet: theme.textTheme.bodyMedium,
+      listBullet: theme.textTheme.bodyMedium?.copyWith(color: Color(0xff172B4D)),
       listBulletPadding: const EdgeInsets.only(right: 4),
-      tableHead: const TextStyle(fontWeight: FontWeight.w600),
+      tableHead: TextStyle(fontWeight: FontWeight.w600, color: Color(0xff172B4D)),
       tableBody: theme.textTheme.bodyMedium,
       tableHeadAlign: TextAlign.center,
       tableBorder: TableBorder.all(
-        color: theme.dividerColor,
+        color: Color(0xffD2D2D2),
+        width: 1,
       ),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       tableCellsDecoration: const BoxDecoration(),
-      blockquotePadding: const EdgeInsets.all(8.0),
+      blockquotePadding: const EdgeInsets.only(top: 6.0, bottom: 2, left: 12),
       blockquoteDecoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(2.0),
+        border: Border(
+          left: BorderSide(width: 4, color: Colors.grey.shade300),
+        ),
       ),
-      codeblockPadding: const EdgeInsets.all(8.0),
+      codeblockPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
       codeblockDecoration: BoxDecoration(
-        color: theme.cardTheme.color ?? theme.cardColor,
+        color: Color(0xffFAFAFA),
         borderRadius: BorderRadius.circular(2.0),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
           top: BorderSide(
             width: 5.0,
-            color: theme.dividerColor,
+            color: Color(0xffD2D2D2),
           ),
         ),
       ),
@@ -341,7 +356,12 @@ class MarkdownStyleSheet {
   /// Creates a [MarkdownStyleSheet] based on the current style, with the
   /// provided parameters overridden.
   MarkdownStyleSheet copyWith({
+    TextStyle? newText,
+    TextStyle? underlineStrike,
+    TextStyle? file,
+    TextStyle? mention,
     TextStyle? a,
+    TextStyle? u,
     TextStyle? p,
     EdgeInsets? pPadding,
     TextStyle? code,
@@ -363,6 +383,7 @@ class MarkdownStyleSheet {
     TextStyle? blockquote,
     TextStyle? img,
     TextStyle? checkbox,
+    TextStyle? pre,
     double? blockSpacing,
     double? listIndent,
     TextStyle? listBullet,
@@ -391,22 +412,17 @@ class MarkdownStyleSheet {
     WrapAlignment? orderedListAlign,
     WrapAlignment? blockquoteAlign,
     WrapAlignment? codeblockAlign,
-    @Deprecated('Use textScaler instead.') double? textScaleFactor,
     TextScaler? textScaler,
+    @Deprecated('Use textScaler instead.') double? textScaleFactor,
   }) {
-    assert(
-      textScaler == null || textScaleFactor == null,
-      'textScaleFactor is deprecated and cannot be specified when textScaler is specified.',
-    );
-    // If either of textScaler or textScaleFactor is non-null, pass null for the
-    // other instead of the previous value, since only one is allowed.
-    final TextScaler? newTextScaler =
-        textScaler ?? (textScaleFactor == null ? this.textScaler : null);
-    final double? nextTextScaleFactor =
-        textScaleFactor ?? (textScaler == null ? this.textScaleFactor : null);
     return MarkdownStyleSheet(
+      newText: newText ?? this.newText,
+      underlineStrike: underlineStrike ?? this.underlineStrike,
+      file: file ?? this.file,
+      mention: mention ?? this.mention,
       a: a ?? this.a,
       p: p ?? this.p,
+      u: u ?? this.u,
       pPadding: pPadding ?? this.pPadding,
       code: code ?? this.code,
       h1: h1 ?? this.h1,
@@ -425,6 +441,7 @@ class MarkdownStyleSheet {
       strong: strong ?? this.strong,
       del: del ?? this.del,
       blockquote: blockquote ?? this.blockquote,
+      pre: pre ?? this.pre,
       img: img ?? this.img,
       checkbox: checkbox ?? this.checkbox,
       blockSpacing: blockSpacing ?? this.blockSpacing,
@@ -438,14 +455,11 @@ class MarkdownStyleSheet {
       tableColumnWidth: tableColumnWidth ?? this.tableColumnWidth,
       tableCellsPadding: tableCellsPadding ?? this.tableCellsPadding,
       tableCellsDecoration: tableCellsDecoration ?? this.tableCellsDecoration,
-      tableVerticalAlignment:
-          tableVerticalAlignment ?? this.tableVerticalAlignment,
       blockquotePadding: blockquotePadding ?? this.blockquotePadding,
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
       codeblockPadding: codeblockPadding ?? this.codeblockPadding,
       codeblockDecoration: codeblockDecoration ?? this.codeblockDecoration,
-      horizontalRuleDecoration:
-          horizontalRuleDecoration ?? this.horizontalRuleDecoration,
+      horizontalRuleDecoration: horizontalRuleDecoration ?? this.horizontalRuleDecoration,
       textAlign: textAlign ?? this.textAlign,
       h1Align: h1Align ?? this.h1Align,
       h2Align: h2Align ?? this.h2Align,
@@ -457,8 +471,7 @@ class MarkdownStyleSheet {
       orderedListAlign: orderedListAlign ?? this.orderedListAlign,
       blockquoteAlign: blockquoteAlign ?? this.blockquoteAlign,
       codeblockAlign: codeblockAlign ?? this.codeblockAlign,
-      textScaler: newTextScaler,
-      textScaleFactor: nextTextScaleFactor,
+      textScaleFactor: textScaleFactor ?? this.textScaleFactor,
     );
   }
 
@@ -469,8 +482,13 @@ class MarkdownStyleSheet {
       return this;
     }
     return copyWith(
+      newText: newText!.merge(other.newText),
+      underlineStrike: underlineStrike!.merge(other.underlineStrike),
+      file: file!.merge(other.file),
+      mention: mention!.merge(other.mention),
       a: a!.merge(other.a),
       p: p!.merge(other.p),
+      u: u!.merge(other.u),
       pPadding: other.pPadding,
       code: code!.merge(other.code),
       h1: h1!.merge(other.h1),
@@ -502,7 +520,6 @@ class MarkdownStyleSheet {
       tableColumnWidth: other.tableColumnWidth,
       tableCellsPadding: other.tableCellsPadding,
       tableCellsDecoration: other.tableCellsDecoration,
-      tableVerticalAlignment: other.tableVerticalAlignment,
       blockquotePadding: other.blockquotePadding,
       blockquoteDecoration: other.blockquoteDecoration,
       codeblockPadding: other.codeblockPadding,
@@ -520,16 +537,24 @@ class MarkdownStyleSheet {
       blockquoteAlign: other.blockquoteAlign,
       codeblockAlign: other.codeblockAlign,
       textScaleFactor: other.textScaleFactor,
-      // Only one of textScaler and textScaleFactor can be passed. If
-      // other.textScaleFactor is non-null, then the sheet was created with a
-      // textScaleFactor and the textScaler was derived from that, so should be
-      // ignored so that the textScaleFactor continues to be set.
-      textScaler: other.textScaleFactor == null ? other.textScaler : null,
     );
   }
 
   /// The [TextStyle] to use for `a` elements.
+  final TextStyle? newText;
+
+  final TextStyle? underlineStrike;
+
   final TextStyle? a;
+
+  /// The [TextStyle] to use for `u` elements.
+  final TextStyle? u;
+
+  /// The [TextStyle] to use for `mention` elements.
+  final TextStyle? mention;
+
+  /// The [TextStyle] to use for `file` elements.
+  final TextStyle? file;
 
   /// The [TextStyle] to use for `p` elements.
   final TextStyle? p;
@@ -593,6 +618,9 @@ class MarkdownStyleSheet {
 
   /// The [TextStyle] to use for `input` elements.
   final TextStyle? checkbox;
+
+  /// The [TextStyle] to use for `codeBlock` elements.
+  final TextStyle? pre;
 
   /// The amount of vertical space to use between block-level elements.
   final double? blockSpacing;
@@ -685,7 +713,10 @@ class MarkdownStyleSheet {
   ///
   /// This will be non-null only if the sheet was created with the deprecated
   /// [textScaleFactor] instead of [textScaler].
+  ///
   @Deprecated('Use textScaler instead.')
+
+  /// The text scale factor to use in textual elements
   final double? textScaleFactor;
 
   /// A [Map] from element name to the corresponding [TextStyle] object.
@@ -694,73 +725,82 @@ class MarkdownStyleSheet {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) {
       return true;
     }
     if (other.runtimeType != MarkdownStyleSheet) {
       return false;
     }
-    return other is MarkdownStyleSheet &&
-        other.a == a &&
-        other.p == p &&
-        other.pPadding == pPadding &&
-        other.code == code &&
-        other.h1 == h1 &&
-        other.h1Padding == h1Padding &&
-        other.h2 == h2 &&
-        other.h2Padding == h2Padding &&
-        other.h3 == h3 &&
-        other.h3Padding == h3Padding &&
-        other.h4 == h4 &&
-        other.h4Padding == h4Padding &&
-        other.h5 == h5 &&
-        other.h5Padding == h5Padding &&
-        other.h6 == h6 &&
-        other.h6Padding == h6Padding &&
-        other.em == em &&
-        other.strong == strong &&
-        other.del == del &&
-        other.blockquote == blockquote &&
-        other.img == img &&
-        other.checkbox == checkbox &&
-        other.blockSpacing == blockSpacing &&
-        other.listIndent == listIndent &&
-        other.listBullet == listBullet &&
-        other.listBulletPadding == listBulletPadding &&
-        other.tableHead == tableHead &&
-        other.tableBody == tableBody &&
-        other.tableHeadAlign == tableHeadAlign &&
-        other.tableBorder == tableBorder &&
-        other.tableColumnWidth == tableColumnWidth &&
-        other.tableCellsPadding == tableCellsPadding &&
-        other.tableCellsDecoration == tableCellsDecoration &&
-        other.tableVerticalAlignment == tableVerticalAlignment &&
-        other.blockquotePadding == blockquotePadding &&
-        other.blockquoteDecoration == blockquoteDecoration &&
-        other.codeblockPadding == codeblockPadding &&
-        other.codeblockDecoration == codeblockDecoration &&
-        other.horizontalRuleDecoration == horizontalRuleDecoration &&
-        other.textAlign == textAlign &&
-        other.h1Align == h1Align &&
-        other.h2Align == h2Align &&
-        other.h3Align == h3Align &&
-        other.h4Align == h4Align &&
-        other.h5Align == h5Align &&
-        other.h6Align == h6Align &&
-        other.unorderedListAlign == unorderedListAlign &&
-        other.orderedListAlign == orderedListAlign &&
-        other.blockquoteAlign == blockquoteAlign &&
-        other.codeblockAlign == codeblockAlign &&
-        other.textScaler == textScaler;
+    final MarkdownStyleSheet typedOther = other;
+    return typedOther.mention == mention &&
+        typedOther.newText == newText &&
+        typedOther.underlineStrike == underlineStrike &&
+        typedOther.file == file &&
+        typedOther.a == a &&
+        typedOther.u == u &&
+        typedOther.p == p &&
+        typedOther.pPadding == pPadding &&
+        typedOther.code == code &&
+        typedOther.h1 == h1 &&
+        typedOther.h1Padding == h1Padding &&
+        typedOther.h2 == h2 &&
+        typedOther.h2Padding == h2Padding &&
+        typedOther.h3 == h3 &&
+        typedOther.h3Padding == h3Padding &&
+        typedOther.h4 == h4 &&
+        typedOther.h4Padding == h4Padding &&
+        typedOther.h5 == h5 &&
+        typedOther.h5Padding == h5Padding &&
+        typedOther.h6 == h6 &&
+        typedOther.h6Padding == h6Padding &&
+        typedOther.em == em &&
+        typedOther.strong == strong &&
+        typedOther.del == del &&
+        typedOther.blockquote == blockquote &&
+        typedOther.img == img &&
+        typedOther.checkbox == checkbox &&
+        typedOther.blockSpacing == blockSpacing &&
+        typedOther.listIndent == listIndent &&
+        typedOther.listBullet == listBullet &&
+        typedOther.listBulletPadding == listBulletPadding &&
+        typedOther.tableHead == tableHead &&
+        typedOther.tableBody == tableBody &&
+        typedOther.tableHeadAlign == tableHeadAlign &&
+        typedOther.tableBorder == tableBorder &&
+        typedOther.tableColumnWidth == tableColumnWidth &&
+        typedOther.tableCellsPadding == tableCellsPadding &&
+        typedOther.tableCellsDecoration == tableCellsDecoration &&
+        typedOther.blockquotePadding == blockquotePadding &&
+        typedOther.blockquoteDecoration == blockquoteDecoration &&
+        typedOther.codeblockPadding == codeblockPadding &&
+        typedOther.codeblockDecoration == codeblockDecoration &&
+        typedOther.horizontalRuleDecoration == horizontalRuleDecoration &&
+        typedOther.textAlign == textAlign &&
+        typedOther.h1Align == h1Align &&
+        typedOther.h2Align == h2Align &&
+        typedOther.h3Align == h3Align &&
+        typedOther.h4Align == h4Align &&
+        typedOther.h5Align == h5Align &&
+        typedOther.h6Align == h6Align &&
+        typedOther.unorderedListAlign == unorderedListAlign &&
+        typedOther.orderedListAlign == orderedListAlign &&
+        typedOther.blockquoteAlign == blockquoteAlign &&
+        typedOther.codeblockAlign == codeblockAlign &&
+        typedOther.textScaleFactor == textScaleFactor;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode {
-    return Object.hashAll(<Object?>[
+    return hashList(<Object?>[
+      newText,
+      underlineStrike,
+      file,
+      mention,
       a,
       p,
+      u,
       pPadding,
       code,
       h1,
