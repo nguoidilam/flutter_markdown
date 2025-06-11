@@ -448,6 +448,13 @@ class MarkdownBuilder implements md.NodeVisitor {
         );
       } else if (tag == 'hr') {
         child = Container(decoration: styleSheet.horizontalRuleDecoration);
+      } else if (tag == 'img') {
+        // create an image widget for this image
+        current.children.add(_buildImage(
+          element.attributes['src']!,
+          element.attributes['title'],
+          element.attributes['alt'],
+        ));
       }
 
       _addBlockChild(child);
@@ -474,16 +481,6 @@ class MarkdownBuilder implements md.NodeVisitor {
             current.children[0] = child;
           }
         }
-      } else if (tag == 'img') {
-        // create an image widget for this image
-        current.children.add(_buildPadding(
-          padding,
-          _buildImage(
-            element.attributes['src']!,
-            element.attributes['title'],
-            element.attributes['alt'],
-          ),
-        ));
       } else if (tag == 'br') {
         current.children.add(_buildRichText(const TextSpan(text: '\n')));
       } else if (tag == 'th' || tag == 'td') {
