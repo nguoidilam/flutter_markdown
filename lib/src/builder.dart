@@ -450,11 +450,11 @@ class MarkdownBuilder implements md.NodeVisitor {
         child = Container(decoration: styleSheet.horizontalRuleDecoration);
       } else if (tag == 'img') {
         // create an image widget for this image
-        current.children.add(_buildImage(
+        child = _buildImage(
           element.attributes['src']!,
           element.attributes['title'],
           element.attributes['alt'],
-        ));
+        );
       }
 
       _addBlockChild(child);
